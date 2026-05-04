@@ -12,7 +12,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white font-sans text-[#4A3728]">
       
-      <main className="w-full">
+      <main className="w-full mt-20">
         {/* --- HERO SECTION --- */}
         <section className="relative w-full min-h-[500px] lg:h-[600px] flex items-center overflow-hidden">
           {/* Background Image Utama (Gedung SMANIKE) */}
