@@ -60,7 +60,7 @@ const DaftarGuru = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex flex-col items-center px-5 py-10 font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex flex-col items-center px-5 py-24 font-sans">
 
       <div className="bg-white w-full max-w-[850px] px-[70px] py-[50px] rounded-[30px] border-2 border-[#3e2723] shadow-[0_15px_35px_rgba(0,0,0,0.04)] mt-5">
 

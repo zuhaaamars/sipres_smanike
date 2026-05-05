@@ -38,16 +38,16 @@ const DashboardGuru = () => {
   }, []);
 
   return (
-    <div className="w-full p-[30px] box-border font-sans">
+    <div className="w-full max-w-[1150px] mx-auto p-[30px] box-border font-sans text-[#6d4c41] ml-0 md:ml-[250px]">
 
       {/* HEADER */}
       <header className="flex justify-between items-center mb-[40px] max-[992px]:flex-col max-[992px]:items-start max-[992px]:gap-[20px]">
         
         <div>
-          <h1 className="text-[1.8rem] text-[#0f3d3a] font-extrabold">
+          <h1 className="text-[1.8rem] font-extrabold">
             Panel Kendali Guru
           </h1>
-          <p className="text-[#64748b] text-sm">
+          <p className="text-sm opacity-80">
             SMAN 1 Kedunggalar - Sistem Informasi Presensi & E-Surat
           </p>
         </div>
@@ -60,7 +60,7 @@ const DashboardGuru = () => {
             </strong>
           </div>
 
-          <div className="w-[40px] h-[40px] bg-[#1a746b] text-white rounded-full flex items-center justify-center font-bold">
+          <div className="w-[40px] h-[40px] bg-[#3e2723] text-white rounded-full flex items-center justify-center font-bold">
             {nama ? nama.charAt(0).toUpperCase() : 'G'}
           </div>
         </div>
@@ -77,8 +77,8 @@ const DashboardGuru = () => {
 
           <div>
             <h3 className="font-bold">Verifikasi E-Surat</h3>
-            <p className="text-sm text-[#64748b]">5 Siswa mengajukan izin hari ini</p>
-            <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#0f3d3a] text-white flex items-center gap-[8px] text-sm">
+            <p className="text-sm opacity-80">5 Siswa mengajukan izin hari ini</p>
+            <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#3e2723] text-white flex items-center gap-[8px] text-sm">
               Periksa Sekarang <ArrowRight size={16} />
             </button>
           </div>
@@ -94,8 +94,8 @@ const DashboardGuru = () => {
 
             <div>
               <h3 className="font-bold">Petugas Piket</h3>
-              <p className="text-sm text-[#64748b]">Generate QR Presensi Gerbang</p>
-              <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#3b82f6] text-white flex items-center gap-[8px] text-sm">
+              <p className="text-sm opacity-80">Generate QR Presensi Gerbang</p>
+              <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#3e2723] text-white flex items-center gap-[8px] text-sm">
                 Buka QR Harian <ArrowRight size={16} />
               </button>
             </div>
@@ -111,8 +111,8 @@ const DashboardGuru = () => {
 
           <div>
             <h3 className="font-bold">Presensi Mapel</h3>
-            <p className="text-sm text-[#64748b]">Generate QR</p>
-            <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#0f3d3a] text-white flex items-center gap-[8px] text-sm">
+            <p className="text-sm opacity-80">Generate QR</p>
+            <button className="mt-[15px] px-[16px] py-[8px] rounded-[8px] bg-[#3e2723] text-white flex items-center gap-[8px] text-sm">
               Buka Barcode <ArrowRight size={16} />
             </button>
           </div>
@@ -129,7 +129,7 @@ const DashboardGuru = () => {
           <div className="bg-white rounded-[20px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.03)]">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-[#f8fafc] text-[#64748b] text-sm">
+                <tr className="bg-[#f8fafc] text-sm opacity-80">
                   <th className="p-[15px] text-left">Nama Siswa</th>
                   <th className="p-[15px] text-left">Harian</th>
                   <th className="p-[15px] text-left">Mapel</th>

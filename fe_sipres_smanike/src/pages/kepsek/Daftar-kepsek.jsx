@@ -26,7 +26,6 @@ const DaftarKepsek = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setIsLoading(true);
 
     try {
@@ -48,40 +47,81 @@ const DaftarKepsek = () => {
   };
 
   return (
-    <div className="daftar-container">
-      <div className="daftar-card">
-        <h2 className="daftar-title">LENGKAPI PROFIL KEPALA SEKOLAH</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] font-sans px-5 py-10">
 
-        <form className="daftar-form" onSubmit={handleSubmit}>
+      <div className="w-full max-w-[850px] bg-white px-[70px] py-[50px] rounded-[30px] border-2 border-[#3e2723] shadow-[0_15px_35px_rgba(0,0,0,0.04)]">
 
-          <div className="form-group-row">
-            <label>NIP</label>
-            <input type="text" name="nip" onChange={handleChange} required />
+        <h2 className="text-center text-[2rem] font-extrabold text-[#4e342e] mb-[40px] tracking-wide">
+          LENGKAPI PROFIL KEPALA SEKOLAH
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* NIP */}
+          <div className="flex items-center gap-[30px] max-md:flex-col max-md:items-start">
+            <label className="w-[220px] font-bold text-[#4e342e]">NIP</label>
+            <input
+              type="text"
+              name="nip"
+              onChange={handleChange}
+              required
+              className="flex-1 w-full border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a] focus:shadow-[0_0_0_3px_rgba(188,143,90,0.2)]"
+            />
           </div>
 
-          <div className="form-group-row">
-            <label>Nama Lengkap</label>
-            <input type="text" name="nama_lengkap" onChange={handleChange} required />
+          {/* Nama */}
+          <div className="flex items-center gap-[30px] max-md:flex-col max-md:items-start">
+            <label className="w-[220px] font-bold text-[#4e342e]">Nama Lengkap</label>
+            <input
+              type="text"
+              name="nama_lengkap"
+              onChange={handleChange}
+              required
+              className="flex-1 w-full border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+            />
           </div>
 
-          <div className="form-group-row">
-            <label>Periode Mulai</label>
-            <input type="date" name="periode_mulai" onChange={handleChange} />
+          {/* Periode Mulai */}
+          <div className="flex items-center gap-[30px] max-md:flex-col max-md:items-start">
+            <label className="w-[220px] font-bold text-[#4e342e]">Periode Mulai</label>
+            <input
+              type="date"
+              name="periode_mulai"
+              onChange={handleChange}
+              className="flex-1 w-full border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+            />
           </div>
 
-          <div className="form-group-row">
-            <label>Periode Selesai</label>
-            <input type="date" name="periode_selesai" onChange={handleChange} />
+          {/* Periode Selesai */}
+          <div className="flex items-center gap-[30px] max-md:flex-col max-md:items-start">
+            <label className="w-[220px] font-bold text-[#4e342e]">Periode Selesai</label>
+            <input
+              type="date"
+              name="periode_selesai"
+              onChange={handleChange}
+              className="flex-1 w-full border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+            />
           </div>
 
-          <div className="daftar-footer-buttons">
-            <button type="button" className="btn-kembali-daftar" onClick={() => navigate(-1)}>
+          {/* BUTTON */}
+          <div className="flex justify-between mt-[50px] gap-5 max-md:flex-col-reverse">
+
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="bg-[#efebe9] text-[#4e342e] px-[35px] py-[12px] rounded-[10px] font-bold hover:bg-[#e0d6c7] transition"
+            >
               Kembali
             </button>
 
-            <button type="submit" className="btn-lanjut" disabled={isLoading}>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-[#6d4c41] text-white px-[30px] py-[12px] rounded-[10px] font-bold hover:bg-[#5d4037] transition disabled:bg-[#bcaaa4]"
+            >
               {isLoading ? "Menyimpan..." : "Simpan Profil"}
             </button>
+
           </div>
 
         </form>

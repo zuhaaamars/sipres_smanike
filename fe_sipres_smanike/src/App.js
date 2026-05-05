@@ -156,7 +156,7 @@ function App() {
         <Route path="/guru/RekapMapel-guru" element={<GuruLayout><RekapMapelGuru /></GuruLayout>} />
 
         {/* --- Staff (ROUTES) --- */}
-        <Route path="/staff/Daftar-staff" element={<StaffLayout><DaftarStaff/></StaffLayout>} />
+        <Route path="/staff/Daftar-staff" element={<MainLayout><DaftarStaff/></MainLayout>} />
         <Route path="/staff/Dashboard-staff" element={<StaffLayout><DashboardStaff/></StaffLayout>} />
         <Route path="/staff/AjuanSurat-staff" element={<StaffLayout><AjuanSuratStaff/></StaffLayout>} />
         <Route path="/staff/RiwayatVerifikasi-staff" element={<StaffLayout><RiwayatVerifikasiStaff/></StaffLayout>} />

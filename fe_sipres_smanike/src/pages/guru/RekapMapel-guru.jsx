@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Search, 
-  BookOpen, 
-  Download, 
-  Calendar, 
-  Users, 
-  CheckCircle, 
-  Clock,
-  Filter
-} from 'lucide-react';
+import { Search, BookOpen, Download, Calendar, Users, CheckCircle, Clock, Filter } from 'lucide-react';
 
 const RekapMapelGuru = () => {
-  // Data dummy rekap kehadiran per mata pelajaran
+
   const [dataRekap] = useState([
     { id: 1, nis: '24001', nama: 'Aditya Pratama', kelas: 'XII RPL 1', mapel: 'Pemrograman Web', status: 'Hadir', jam: '08:00 - 10:00' },
     { id: 2, nis: '24002', nama: 'Bina Reza Yuanda', kelas: 'XII RPL 1', mapel: 'Pemrograman Web', status: 'Hadir', jam: '08:00 - 10:00' },
@@ -21,98 +12,147 @@ const RekapMapelGuru = () => {
   ]);
 
   return (
-    <div className="rm-container">
-      <header className="rm-header">
-        <div className="rm-header-info">
-          <h1>Laporan Presensi Mata Pelajaran</h1>
-          <p>Rekapitulasi kehadiran siswa berdasarkan jam mengajar Anda.</p>
-        </div>
-        <div className="rm-header-actions">
-          <button className="rm-btn secondary"><Calendar size={18} /> Pilih Periode</button>
-          <button className="rm-btn primary"><Download size={18} /> Download PDF</button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#f8fafc] font-sans text-[#6d4c41] ml-0 md:ml-[250px]">
 
-      {/* SUMMARY CARDS */}
-      <div className="rm-summary-grid">
-        <div className="rm-summary-card">
-          <div className="rm-card-icon blue"><BookOpen size={24} /></div>
-          <div className="rm-card-text">
-            <span>Total Pertemuan</span>
-            <h3>12 Kali</h3>
-          </div>
-        </div>
-        <div className="rm-summary-card">
-          <div className="rm-card-icon green"><CheckCircle size={24} /></div>
-          <div className="rm-card-text">
-            <span>Rata-rata Kehadiran</span>
-            <h3>94%</h3>
-          </div>
-        </div>
-        <div className="rm-summary-card">
-          <div className="rm-card-icon orange"><Users size={24} /></div>
-          <div className="rm-card-text">
-            <span>Siswa Terajin</span>
-            <h3>32 Siswa</h3>
-          </div>
-        </div>
-      </div>
+      {/* WRAPPER 1150 */}
+      <div className="max-w-[1150px] mx-auto p-[20px]">
 
-      {/* FILTER & SEARCH */}
-      <div className="rm-filter-bar">
-        <div className="rm-search-input">
-          <Search size={18} />
-          <input type="text" placeholder="Cari nama atau kelas..." />
-        </div>
-        <div className="rm-filter-group">
-          <select className="rm-select">
-            <option>Semua Mata Pelajaran</option>
-            <option>Pemrograman Web</option>
-            <option>Basis Data</option>
-          </select>
-          <select className="rm-select">
-            <option>Semua Kelas</option>
-            <option>XII RPL 1</option>
-            <option>XII RPL 2</option>
-          </select>
-          <button className="rm-filter-btn"><Filter size={18} /></button>
-        </div>
-      </div>
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-[30px] flex-wrap gap-[15px]">
 
-      {/* TABLE DATA */}
-      <div className="rm-table-container">
-        <table className="rm-table">
-          <thead>
-            <tr>
-              <th>NIS</th>
-              <th>Nama Siswa</th>
-              <th>Kelas</th>
-              <th>Mata Pelajaran</th>
-              <th>Jam Pelajaran</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataRekap.map((item) => (
-              <tr key={item.id}>
-                <td className="fw-bold">{item.nis}</td>
-                <td>{item.nama}</td>
-                <td>{item.kelas}</td>
-                <td><span className="rm-mapel-tag">{item.mapel}</span></td>
-                <td>
-                  <div className="rm-time-info">
-                    <Clock size={14} /> {item.jam}
-                  </div>
-                </td>
-                <td>
-                  <span className={`rm-status-pill ${item.status.toLowerCase()}`}>
-                    {item.status}
-                  </span>
-                </td>
+          <div>
+            <h1 className="text-[1.8rem] font-extrabold">
+              Laporan Presensi Mata Pelajaran
+            </h1>
+            <p className="text-sm text-[#6d4c41]/70">
+              Rekap kehadiran siswa berdasarkan jam mengajar
+            </p>
+          </div>
+
+          <button className="flex items-center gap-[8px] px-[18px] py-[10px] bg-[#3e2723] text-white rounded-[10px] font-semibold hover:opacity-90 transition">
+            <Download size={18} />
+            Download PDF
+          </button>
+
+        </div>
+
+        {/* SUMMARY */}
+        <div className="grid grid-cols-3 gap-[20px] mb-[30px] max-md:grid-cols-1">
+
+          <div className="bg-white p-[20px] rounded-[16px] flex items-center gap-[12px] shadow-sm">
+            <BookOpen />
+            <div>
+              <p className="text-sm text-[#6d4c41]/70">Total Pertemuan</p>
+              <h3 className="font-bold">12 Kali</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-[20px] rounded-[16px] flex items-center gap-[12px] shadow-sm">
+            <CheckCircle />
+            <div>
+              <p className="text-sm text-[#6d4c41]/70">Rata-rata Kehadiran</p>
+              <h3 className="font-bold">94%</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-[20px] rounded-[16px] flex items-center gap-[12px] shadow-sm">
+            <Users />
+            <div>
+              <p className="text-sm text-[#6d4c41]/70">Siswa Teraktif</p>
+              <h3 className="font-bold">32 Siswa</h3>
+            </div>
+          </div>
+
+        </div>
+
+        {/* FILTER */}
+        <div className="flex justify-between gap-[15px] flex-wrap mb-[20px]">
+
+          <div className="flex items-center gap-[10px] bg-white px-[16px] py-[10px] rounded-[12px] flex-1 border border-gray-200">
+            <Search size={18} />
+            <input
+              placeholder="Cari nama atau kelas..."
+              className="w-full outline-none bg-transparent text-[#6d4c41]"
+            />
+          </div>
+
+          <div className="flex gap-[10px] flex-wrap">
+
+            <select className="px-[12px] py-[10px] rounded-[10px] border border-gray-200 bg-white text-[#6d4c41]">
+              <option>Semua Mapel</option>
+              <option>Pemrograman Web</option>
+              <option>Basis Data</option>
+            </select>
+
+            <select className="px-[12px] py-[10px] rounded-[10px] border border-gray-200 bg-white text-[#6d4c41]">
+              <option>Semua Kelas</option>
+              <option>XII RPL 1</option>
+              <option>XII RPL 2</option>
+            </select>
+
+            <button className="p-[10px] bg-white border border-gray-200 rounded-[10px]">
+              <Filter size={18} />
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* TABLE */}
+        <div className="bg-white rounded-[16px] shadow-sm overflow-x-auto">
+
+          <table className="w-full min-w-[700px]">
+
+            <thead className="bg-gray-50 text-[#6d4c41]/70 text-sm">
+              <tr>
+                <th className="p-[15px] text-left">NIS</th>
+                <th className="p-[15px] text-left">Nama</th>
+                <th className="p-[15px] text-left">Kelas</th>
+                <th className="p-[15px] text-left">Mapel</th>
+                <th className="p-[15px] text-left">Jam</th>
+                <th className="p-[15px] text-left">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+
+              {dataRekap.map((item) => (
+                <tr key={item.id} className="border-b">
+
+                  <td className="p-[15px] font-bold">{item.nis}</td>
+                  <td className="p-[15px]">{item.nama}</td>
+                  <td className="p-[15px]">{item.kelas}</td>
+
+                  <td className="p-[15px]">
+                    <span className="bg-gray-100 px-[10px] py-[4px] rounded-[6px] text-sm">
+                      {item.mapel}
+                    </span>
+                  </td>
+
+                  <td className="p-[15px] flex items-center gap-[6px]">
+                    <Clock size={14} />
+                    {item.jam}
+                  </td>
+
+                  <td className="p-[15px]">
+                    <span className={`px-[12px] py-[4px] rounded-full text-xs font-bold
+                      ${item.status === 'Hadir' && 'bg-green-100 text-green-700'}
+                      ${item.status === 'Izin' && 'bg-yellow-100 text-yellow-700'}
+                      ${item.status === 'Alpa' && 'bg-red-100 text-red-700'}
+                    `}>
+                      {item.status}
+                    </span>
+                  </td>
+
+                </tr>
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
     </div>
   );
