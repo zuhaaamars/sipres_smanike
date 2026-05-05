@@ -6,7 +6,6 @@ from app.controllers.auth_controllers import (
     update_siswa_profile, 
     update_guru_profile, 
     update_staf_profile, 
-    update_kepsek_profile,
     get_pending_users,  
     approve_user
 )
@@ -22,7 +21,6 @@ auth_bp.route('/register', methods=['POST'])(register_user)
 auth_bp.route('/siswa/update', methods=['POST'])(update_siswa_profile)
 auth_bp.route('/guru/update', methods=['POST'])(update_guru_profile)
 auth_bp.route('/staf/update', methods=['POST'])(update_staf_profile)
-auth_bp.route('/kepsek/update', methods=['POST'])(update_kepsek_profile)
 
 # Endpoint untuk ambil daftar user
 auth_bp.route('/pending-users', methods=['GET'])(get_pending_users)

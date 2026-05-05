@@ -36,18 +36,17 @@ def create_app():
     from app.models.master.jurusan_models import Jurusan
     from app.models.master.kelas_models import Kelas
     from app.models.master.mapel_models import Mapel
-    from app.models.master.jenis_surat_models import JenisSurat
+    from app.models.master.jadwal_pelajaran_models import JadwalPelajaran
+    from app.models.master.master_siswa_models import MasterSiswa
 
-    from app.models.user_models import User
-    from app.models.admin_models import Admin
-    from app.models.siswa_models import Siswa
-    from app.models.guru_models import Guru
-    from app.models.staff_models import Staf
-    from app.models.kepsek_models import KepalaSekolah
-    from app.models.siswa_presensi_harian_models import PresensiHarian
-    from app.models.presensi_siswa_models import PresensiSiswa
-    from app.models.presensiQR_models import PresensiQR
-
+    from app.models.user.user_models import User
+    from app.models.user.admin_models import Admin
+    from app.models.user.siswa_models import Siswa
+    from app.models.user.guru_models import Guru
+    from app.models.user.staff_models import Staf
+    from app.models.presensi.siswa_presensi_harian_models import PresensiHarian
+    from app.models.presensi.presensi_siswa_models import PresensiSiswa
+    from app.models.presensi.presensiQR_models import PresensiQR
 
     # 6. REGISTER BLUEPRINTS (Menghubungkan Jalur API)
     from app.routes.auth_routes import auth_bp
@@ -55,16 +54,14 @@ def create_app():
     from app.routes.master.mapel_routes import mapel_bp
     from app.routes.master.Jurusan_routes import jurusan_bp
     from app.routes.master.kelas_routes import kelas_bp
-    from app.routes.presensi_siswa_routes import presensi_bp
-    from app.routes.presensiQR_routes import presensiQR_bp
+    from app.routes.master_siswa_routes import siswa_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(harian_bp, url_prefix='/api/presensi')
-    app.register_blueprint(mapel_bp, url_prefix='/api/mapel')
+    app.register_blueprint(mapel_bp, url_prefix='/api/master-mapel')
     app.register_blueprint(jurusan_bp, url_prefix='/api/jurusan')
     app.register_blueprint(kelas_bp, url_prefix='/api/kelas')
-    app.register_blueprint(presensi_bp, url_prefix='/api/presensi/mapel')
-    app.register_blueprint(presensiQR_bp, url_prefix='/api/presensi/generate')
+    app.register_blueprint(siswa_bp, url_prefix='/api/siswa')
 
     # 7. ROUTE DASAR
     @app.route("/")

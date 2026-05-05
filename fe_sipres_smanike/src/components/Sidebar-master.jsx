@@ -34,27 +34,6 @@ const SidebarMaster = () => {
       {/* MENU */}
       <div className="flex-1 mt-4 px-3 space-y-2 overflow-y-auto">
 
-        <Link to="/master/DataJurusan-master">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/master/DataJurusan-master')}`}>
-            <UserCheck size={20} />
-            <span className="text-sm">Data Jurusan</span>
-          </div>
-        </Link>
-
-        <Link to="/master/DataKelas-master">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/master/DataKelas-master')}`}>
-            <School size={20} />
-            <span className="text-sm">Data Kelas</span>
-          </div>
-        </Link>
-
-        <Link to="/master/DataGuru-master">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/master/DataGuru-master')}`}>
-            <Users size={20} />
-            <span className="text-sm">Data Guru</span>
-          </div>
-        </Link>
-
         <Link to="/master/DataMapel-master">
           <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/master/DataMapel-master')}`}>
             <BookOpen size={20} />

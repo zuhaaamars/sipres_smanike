@@ -18,7 +18,6 @@ import DaftarSiswa from './pages/siswa/Daftar-siswa';
 import DashboardSiswa from './pages/siswa/Dashboard-siswa.jsx'; 
 import ScanPresensiHarian from './pages/siswa/PresensiHarian-siswa.jsx';
 import ScanPresensiMapel from './pages/siswa/PresensiMapel-siswa.jsx';
-import ScanQR from './pages/siswa/ScanQRMapel-siswa.jsx';
 
 // Import Pages role GURU
 import DaftarGuru from './pages/guru/Daftar-guru.jsx';
@@ -29,12 +28,12 @@ import RekapMapelGuru from './pages/guru/RekapMapel-guru.jsx';
 
 //import pages role staff
 import DaftarStaff from './pages/staff/Daftar-staff';
+import DashboardStaff from './pages/staff/Dashboard-staff';
 import VerifikasiUser from './pages/staff/VerifikasiUser.jsx';
-
-
-//import pages role master
-import DataMapel from './pages/master/DataMapel.jsx';
-
+import ImportGuru from './pages/staff/ImportGuru.jsx';
+import ImportSiswa from './pages/staff/ImportSiswa.jsx';
+import MasterMapel from './pages/staff/ImportMapel.jsx';
+import JadwalPelajaran from './pages/staff/JadwalPelajaran.jsx';
 
 // 1. NAVBAR UNTUK LOGIN DAN DAFTAR
 const MainLayout = ({ children }) => (
@@ -76,24 +75,6 @@ const StaffLayout = ({ children }) => (
   </div>
 );
 
-
-//7. Si debar master
-const MasterLayout = ({ children }) => (
-  <div 
-    className="master-container" 
-    style={{ display: 'flex', minHeight: '100vh' }}
-  >
-    <SidebarMaster/>
-
-    <div 
-      className="master-main-content" 
-      style={{ flex: 1, backgroundColor: '#f4f4f4' }}
-    >
-      {children}
-    </div>
-  </div>
-);
-
 function App() {
   return (
     <Router>
@@ -102,28 +83,30 @@ function App() {
         <Route path="/" element={<MainLayout><LandingPage /></MainLayout>} />
         <Route path="/Login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/daftar" element={<MainLayout><Daftar /></MainLayout>} />
+
+        {/*DAFTAR PER ROLE*/}
+        <Route path="/siswa/Daftar-siswa" element={<MainLayout><DaftarSiswa /></MainLayout>} />
+        <Route path="/guru/Daftar-guru" element={<MainLayout><DaftarGuru /></MainLayout>} />
+        <Route path="/staff/Daftar-staff" element={<MainLayout><DaftarStaff/></MainLayout>} />
         
         {/* --- SISWA ROUTES --- */}
-        <Route path="/siswa/Daftar-siswa" element={<MainLayout><DaftarSiswa /></MainLayout>} />
         <Route path="/siswa/Dashboard-siswa" element={<DashboardLayout><DashboardSiswa /></DashboardLayout>} />
         <Route path="/siswa/PresensiHarian-siswa" element={<DashboardLayout><ScanPresensiHarian /></DashboardLayout>} />
         <Route path="/siswa/PresensiMapel-siswa" element={<DashboardLayout><ScanPresensiMapel /></DashboardLayout>} />
-        <Route path="/siswa/ScanQR-siswa" element={<DashboardLayout><ScanQR/></DashboardLayout>} />
 
         {/* --- GURU ROUTES --- */}
-        <Route path="/guru/Daftar-guru" element={<MainLayout><DaftarGuru /></MainLayout>} />
         <Route path="/guru/Dashboard-guru" element={<GuruLayout><DashboardGuru /></GuruLayout>} />
         <Route path="/guru/RekapHarian-guru" element={<GuruLayout><RekapHarianGuru /></GuruLayout>} />
         <Route path="/guru/GenerateBarcodeMapel-guru" element={<GuruLayout><GenerateQRMapel /></GuruLayout>} />
         <Route path="/guru/RekapMapel-guru" element={<GuruLayout><RekapMapelGuru /></GuruLayout>} />
 
         {/* --- Staff (ROUTES) --- */}
-        <Route path="/staff/Daftar-staff" element={<MainLayout><DaftarStaff/></MainLayout>} />
+        <Route path="/staff/Dashboard-staff" element={<StaffLayout><DashboardStaff/></StaffLayout>} />
         <Route path="/staff/VerifikasiUser" element={<StaffLayout><VerifikasiUser/></StaffLayout>} />
-
-        {/* --- Master (ROUTES) --- */}
-        <Route path="/master/DataMapel" element={<MasterLayout><DataMapel /></MasterLayout>} />
-
+        <Route path="/staff/ImportGuru" element={<StaffLayout><ImportGuru/></StaffLayout>} />
+        <Route path="/staff/ImportSiswa" element={<StaffLayout><ImportSiswa/></StaffLayout>} />
+        <Route path="/staff/ImportMapel" element={<StaffLayout><MasterMapel/></StaffLayout>} />
+        <Route path="/staff/JadwalPelajaran" element={<StaffLayout><JadwalPelajaran/></StaffLayout>} />
 
       </Routes>
     </Router>

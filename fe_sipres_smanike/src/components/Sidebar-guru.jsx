@@ -31,7 +31,7 @@ const SidebarGuru = () => {
       : "text-[#3E3E3E] hover:bg-[#F4A261]/20";
 
   return (
-    <div className="fixed top-0 left-0 w-64 h-screen bg-[#FDF8F1] flex flex-col border-r z-40">
+    <div className="fixed top-0 left-0 w-64 h-screen bg-[#FDF8F1] flex flex-col border-r z-40 hidden md:flex">
 
       {/* HEADER */}
       <div className="flex flex-col items-center py-8 border-b">
@@ -55,36 +55,6 @@ const SidebarGuru = () => {
             <span className="text-sm">Dashboard</span>
           </div>
         </Link>
-
-        {/* VERIFIKASI SURAT */}
-        <div>
-          <div
-            onClick={() => toggleMenu('verifikasiSurat')}
-            className="flex items-center justify-between px-4 py-3 text-[#3E3E3E] hover:bg-[#F4A261]/20 rounded-xl cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <FileCheck size={20} />
-              <span className="text-sm">Verifikasi Surat</span>
-            </div>
-            <ChevronDown className={`transition ${openMenus.verifikasiSurat ? "rotate-180" : ""}`} />
-          </div>
-
-          {openMenus.verifikasiSurat && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/guru/AjuanSurat-guru">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/guru/AjuanSurat-guru')}`}>
-                  <ClipboardList size={16} /> Daftar Ajuan
-                </div>
-              </Link>
-
-              <Link to="/guru/RiwayatVerifikasi-guru">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/guru/RiwayatVerifikasi-guru')}`}>
-                  <History size={16} /> Riwayat
-                </div>
-              </Link>
-            </div>
-          )}
-        </div>
 
         {/* REKAP HARIAN */}
         {isPiket && (

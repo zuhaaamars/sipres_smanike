@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  FileText, 
+  FileTex,
   Plus, 
   History, 
   BookOpen, 
@@ -36,7 +36,7 @@ const SidebarSiswa = () => {
       {/* 🔥 BUTTON MOBILE */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-0 left-0 h-screen w-64 bg-[#FDF8F1] z-50"
+        className="fixed top-20 left-4 z-[60] md:hidden bg-white p-2 rounded-lg shadow"
       >
         <Menu />
       </button>
@@ -91,39 +91,6 @@ const SidebarSiswa = () => {
             </Link>
 
             {/* E-SURAT */}
-            <div>
-              <div
-                onClick={() => toggleMenu('esurat')}
-                className="flex items-center justify-between px-4 py-3 text-[#3E3E3E] hover:bg-[#F4A261]/20 rounded-xl cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <FileText size={20} />
-                  <span className="text-sm">E-Surat</span>
-                </div>
-                <ChevronDown
-                  size={16}
-                  className={`transition ${openMenus.esurat ? "rotate-180" : ""}`}
-                />
-              </div>
-
-              {openMenus.esurat && (
-                <div className="ml-8 mt-2 space-y-1">
-
-                  <Link to="/siswa/AjuanSurat-siswa" onClick={() => setIsOpen(false)}>
-                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/siswa/AjuanSurat-siswa')}`}>
-                      <Plus size={16} /> Buat Ajuan
-                    </div>
-                  </Link>
-
-                  <Link to="/siswa/RiwayatSurat-siswa" onClick={() => setIsOpen(false)}>
-                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/siswa/RiwayatSurat-siswa')}`}>
-                      <History size={16} /> Riwayat
-                    </div>
-                  </Link>
-
-                </div>
-              )}
-            </div>
 
             <Link to="/siswa/PresensiHarian-siswa" onClick={() => setIsOpen(false)}>
               <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/siswa/PresensiHarian-siswa')}`}>

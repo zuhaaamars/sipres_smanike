@@ -6,7 +6,7 @@ import {
   ChevronRight, AlertCircle
 } from 'lucide-react';
 
-const TARGET_COORDS = { lat: -7.542078, lng: 111.6486213 };
+const TARGET_COORDS = { lat: -7.556146, lng: 111.659973 };
 const MAX_RADIUS = 100;
 
 const ScanPresensiHarian = () => {

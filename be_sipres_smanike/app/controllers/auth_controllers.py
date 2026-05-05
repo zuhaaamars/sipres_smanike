@@ -1,11 +1,10 @@
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from app.models.user_models import User, MasterSiswa, MasterGuru
-from app.models.admin_models import Admin
-from app.models.guru_models import Guru
-from app.models.siswa_models import Siswa
-from app.models.staff_models import Staf 
-from app.models.kepsek_models import KepalaSekolah
+from app.models.user.user_models import User, MasterSiswa, MasterGuru
+from app.models.user.admin_models import Admin
+from app.models.user.guru_models import Guru
+from app.models.user.siswa_models import Siswa
+from app.models.user.staff_models import Staf 
 from app.app import db
 from datetime import datetime
 import pandas as pd
@@ -40,9 +39,6 @@ def login():
             profile_id = profil.id if profil else None
         elif user.role in ['staf', 'staff']:
             profil = Staf.query.filter_by(user_id=user.id).first()
-            profile_id = profil.id if profil else None
-        elif user.role == 'kepsek':
-            profil = KepalaSekolah.query.filter_by(user_id=user.id).first()
             profile_id = profil.id if profil else None
         elif user.role == 'admin':
             profil = Admin.query.filter_by(user_id=user.id).first()
@@ -111,8 +107,6 @@ def register_user():
             profile = Guru(**common_fields, no_hp=data.get('no_hp'), nip=reg_id, gelar=data.get('gelar'))
         elif role in ['staf', 'staff']:
             profile = Staf(**common_fields, nip=reg_id, bagian=None)
-        elif role == 'kepsek':
-            profile = KepalaSekolah(**common_fields, nip=reg_id, periode_mulai=None, periode_selesai=None)
         elif role == 'admin':
             profile = Admin(user_id=new_user.id, nama_lengkap=data.get('nama_lengkap'), email=data.get('email'))
 
@@ -132,19 +126,41 @@ def register_user():
 # =================[ 3. UPDATE PROFIL (TAHAP 2) ]=================
 def update_siswa_profile():
     data = request.get_json()
-    user_id = data.get('userId')
+
     try:
+        if not data:
+            return jsonify({"status": "error", "message": "Tidak ada data yang dikirim"}), 400
+
+        user_id = data.get('userId')
+
+        if not user_id:
+            return jsonify({"status": "error", "message": "userId wajib dikirim"}), 400
+
         siswa = Siswa.query.filter_by(user_id=user_id).first()
-        if not siswa: return jsonify({"status": "error", "message": "Data siswa tidak ditemukan"}), 404
+
+        if not siswa:
+            return jsonify({"status": "error", "message": "Data siswa tidak ditemukan"}), 404
+
+        # UPDATE FIELD (AMAN dari null)
         siswa.nisn = data.get('nisn')
         siswa.nama_ortu = data.get('nama_ortu')
         siswa.no_telp_ortu = data.get('no_telp_ortu')
         siswa.kelas_id = data.get('kelas_id')
         siswa.jurusan_id = data.get('jurusan_id')
+
         db.session.commit()
-        return jsonify({"status": "success", "message": "Profil Siswa Berhasil Dilengkapi!"}), 200
+
+        return jsonify({
+            "status": "success",
+            "message": "Profil Siswa Berhasil Dilengkapi!"
+        }), 200
+
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 def update_guru_profile():
     data = request.get_json()
@@ -171,21 +187,6 @@ def update_staf_profile():
         staf.bagian = data.get('bagian')
         db.session.commit()
         return jsonify({"status": "success", "message": "Profil Staf Berhasil Dilengkapi!"}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-def update_kepsek_profile():
-    data = request.get_json()
-    user_id = data.get('userId')
-    try:
-        kepsek = KepalaSekolah.query.filter_by(user_id=user_id).first()
-        if not kepsek: return jsonify({"status": "error", "message": "Data Kepala Sekolah tidak ditemukan"}), 404
-        kepsek.nip = data.get('nip')
-        kepsek.gelar = data.get('gelar')
-        kepsek.periode_mulai = data.get('periode_mulai')
-        kepsek.periode_selesai = data.get('periode_selesai')
-        db.session.commit()
-        return jsonify({"status": "success", "message": "Profil Kepala Sekolah Berhasil Dilengkapi!"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

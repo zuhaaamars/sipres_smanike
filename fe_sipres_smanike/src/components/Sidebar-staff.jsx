@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FileCheck, 
-  ClipboardList, 
-  History, 
-  FileText,
-  Archive,
-  BarChart3,
-  LogOut, 
+import {
+  LayoutDashboard,
+  UserCheck,
+  LogOut,
   ChevronDown,
-  UserCheck // Tambahkan icon UserCheck
+  Menu,
+  X,
+  Database,
+  BookOpen,
+  CalendarDays
 } from 'lucide-react';
 
 const SidebarTU = () => {
   const location = useLocation();
 
+  const [isOpen, setIsOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState({
-    verifikasiUser: true, // Tambahkan state untuk menu verifikasi user
-    verifikasiSurat: true,
-    generateSurat: true,
-    arsipSurat: true,
-    presensi: true
+    verifikasiUser: true,
+    masterData: true
   });
 
   const toggleMenu = (menu) => {
@@ -34,176 +31,145 @@ const SidebarTU = () => {
       : "text-[#3E3E3E] hover:bg-[#F4A261]/20";
 
   return (
-    <div className="fixed top-0 left-0 w-64 h-screen bg-[#FDF8F1] flex flex-col border-r z-40">
+    <>
+      {/* HAMBURGER */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed top-20 left-4 z-[60] md:hidden bg-white p-2 rounded-lg shadow"
+      >
+        <Menu />
+      </button>
 
-      {/* HEADER */}
-      <div className="flex flex-col items-center py-8 border-b">
-        <img
-          src="/assets/logo_saung.png"
-          alt="Logo"
-          className="w-[100px] h-[100px] object-contain"
+      {/* OVERLAY */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
         />
-        <h2 className="text-[#8D6E63] font-bold text-base tracking-wide text-center">
-          SAUNG SMANIKE
-        </h2>
-      </div>
+      )}
 
-      {/* MENU */}
-      <div className="flex-1 px-3 mt-4 space-y-2 overflow-y-auto">
+      {/* SIDEBAR */}
+      <div className={`
+        fixed top-0 left-0 h-screen w-64 bg-[#FDF8F1] z-50
+        transform transition-transform duration-300
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 flex flex-col border-r
+      `}>
 
-        {/* DASHBOARD */}
-        <Link to="/staff/Dashboard-staff">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/staff/Dashboard-staff')}`}>
-            <LayoutDashboard size={20} />
-            <span className="text-sm">Dashboard</span>
-          </div>
-        </Link>
-
-        {/* VERIFIKASI USER (MENU BARU) */}
-        <div>
-          <div
-            onClick={() => toggleMenu('verifikasiUser')}
-            className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
-          >
-            <div className="flex items-center gap-3">
-              <UserCheck size={20} />
-              <span className="text-sm font-semibold">Verifikasi Akun</span>
-            </div>
-            <ChevronDown className={`transition ${openMenus.verifikasiUser ? "rotate-180" : ""}`} />
-          </div>
-
-          {openMenus.verifikasiUser && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/staff/VerifikasiUser">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/verifikasi-user')}`}>
-                  <UserCheck size={16} /> Daftar Tunggu
-                </div>
-              </Link>
-            </div>
-          )}
+        {/* CLOSE */}
+        <div className="md:hidden flex justify-end p-4">
+          <button onClick={() => setIsOpen(false)}>
+            <X />
+          </button>
         </div>
 
-        {/* VERIFIKASI SURAT */}
-        <div>
-          <div
-            onClick={() => toggleMenu('verifikasiSurat')}
-            className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
-          >
-            <div className="flex items-center gap-3">
-              <FileCheck size={20} />
-              <span className="text-sm">Verifikasi Surat</span>
-            </div>
-            <ChevronDown className={`transition ${openMenus.verifikasiSurat ? "rotate-180" : ""}`} />
-          </div>
-
-          {openMenus.verifikasiSurat && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/staff/AjuanSurat-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/AjuanSurat-staff')}`}>
-                  <ClipboardList size={16} /> Daftar Ajuan
-                </div>
-              </Link>
-
-              <Link to="/staff/RiwayatVerifikasi-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/RiwayatVerifikasi-staff')}`}>
-                  <History size={16} /> Riwayat
-                </div>
-              </Link>
-            </div>
-          )}
+        {/* HEADER */}
+        <div className="flex flex-col items-center py-8 border-b">
+          <img
+            src="/assets/logo_saung.png"
+            alt="Logo"
+            className="w-[100px] h-[100px] object-contain"
+          />
+          <h2 className="text-[#8D6E63] font-bold text-base text-center">
+            SAUNG SMANIKE
+          </h2>
         </div>
 
-        {/* GENERATE SURAT */}
-        <div>
-          <div
-            onClick={() => toggleMenu('generateSurat')}
-            className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
-          >
-            <div className="flex items-center gap-3">
-              <FileText size={20} />
-              <span className="text-sm">Generate Surat</span>
+        {/* MENU */}
+        <div className="flex-1 px-3 mt-4 space-y-2 overflow-y-auto">
+
+          {/* DASHBOARD */}
+          <Link to="/staff/Dashboard-staff" onClick={() => setIsOpen(false)}>
+            <div className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isActive('/staff/Dashboard-staff')}`}>
+              <LayoutDashboard size={20} />
+              <span className="text-sm">Dashboard</span>
             </div>
-            <ChevronDown className={`transition ${openMenus.generateSurat ? "rotate-180" : ""}`} />
+          </Link>
+
+          {/* VERIFIKASI AKUN */}
+          <div>
+            <div
+              onClick={() => toggleMenu('verifikasiUser')}
+              className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
+            >
+              <div className="flex items-center gap-3">
+                <UserCheck size={20} />
+                <span className="text-sm font-semibold">Verifikasi Akun</span>
+              </div>
+              <ChevronDown className={`transition ${openMenus.verifikasiUser ? "rotate-180" : ""}`} />
+            </div>
+
+            {openMenus.verifikasiUser && (
+              <div className="ml-8 mt-2 space-y-1">
+                <Link to="/staff/VerifikasiUser" onClick={() => setIsOpen(false)}>
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/VerifikasiUser')}`}>
+                    User Pending
+                  </div>
+                </Link>
+              </div>
+            )}
           </div>
 
-          {openMenus.generateSurat && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/staff/GenerateSurat-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/GenerateSurat-staff')}`}>
-                  <FileText size={16} /> Buat Surat
-                </div>
-              </Link>
+          {/* 🔥 MASTER DATA */}
+          <div>
+            <div
+              onClick={() => toggleMenu('masterData')}
+              className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
+            >
+              <div className="flex items-center gap-3">
+                <Database size={20} />
+                <span className="text-sm font-semibold">Master Data</span>
+              </div>
+              <ChevronDown className={`transition ${openMenus.masterData ? "rotate-180" : ""}`} />
             </div>
-          )}
+
+            {openMenus.masterData && (
+              <div className="ml-8 mt-2 space-y-1">
+
+                <Link to="/staff/ImportSiswa" onClick={() => setIsOpen(false)}>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isActive('/staff/ImportSiswa')}`}>
+                    📥 Data Siswa
+                  </div>
+                </Link>
+
+                <Link to="/staff/ImportGuru" onClick={() => setIsOpen(false)}>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isActive('/staff/ImportGuru')}`}>
+                    📥 Data Guru
+                  </div>
+                </Link>
+
+                {/* 🔥 TAMBAHAN BARU */}
+                <Link to="/staff/ImportMapel" onClick={() => setIsOpen(false)}>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isActive('/staff/ImportMapel')}`}>
+                    📥 Data Mata Pelajaran
+                  </div>
+                </Link>
+
+                <Link to="/staff/JadwalPelajaran" onClick={() => setIsOpen(false)}>
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/JadwalPelajaran')}`}>
+                    <CalendarDays size={16} />
+                    Jadwal Pelajaran
+                  </div>
+                </Link>
+
+              </div>
+            )}
+          </div>
+
         </div>
 
-        {/* ARSIP SURAT */}
-        <div>
-          <div
-            onClick={() => toggleMenu('arsipSurat')}
-            className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
-          >
-            <div className="flex items-center gap-3">
-              <Archive size={20} />
-              <span className="text-sm">Arsip Surat</span>
+        {/* LOGOUT */}
+        <div className="px-3 pb-6">
+          <Link to="/login" onClick={() => setIsOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#3E3E3E] hover:bg-red-400 hover:text-white transition">
+              <LogOut size={20} />
+              <span className="text-sm">Keluar</span>
             </div>
-            <ChevronDown className={`transition ${openMenus.arsipSurat ? "rotate-180" : ""}`} />
-          </div>
-
-          {openMenus.arsipSurat && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/staff/ArsipSurat-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/ArsipSurat-staff')}`}>
-                  <Archive size={16} /> Semua Surat
-                </div>
-              </Link>
-            </div>
-          )}
-        </div>
-
-        {/* PRESENSI */}
-        <div>
-          <div
-            onClick={() => toggleMenu('presensi')}
-            className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer text-[#3E3E3E] hover:bg-[#F4A261]/20"
-          >
-            <div className="flex items-center gap-3">
-              <BarChart3 size={20} />
-              <span className="text-sm">Presensi</span>
-            </div>
-            <ChevronDown className={`transition ${openMenus.presensi ? "rotate-180" : ""}`} />
-          </div>
-
-          {openMenus.presensi && (
-            <div className="ml-8 mt-2 space-y-1">
-              <Link to="/staff/RekapHarian-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/RekapHarian-staff')}`}>
-                  <History size={16} /> Rekap Harian
-                </div>
-              </Link>
-
-              <Link to="/staff/LaporanPresensi-staff">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive('/staff/LaporanPresensi-staff')}`}>
-                  <ClipboardList size={16} /> Laporan
-                </div>
-              </Link>
-            </div>
-          )}
+          </Link>
         </div>
 
       </div>
-
-      {/* LOGOUT */}
-      <div className="px-3 pb-6">
-        <Link to="/login">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#3E3E3E] hover:bg-red-400 hover:text-white transition">
-            <LogOut size={20} />
-            <span className="text-sm">Keluar</span>
-          </div>
-        </Link>
-      </div>
-
-    </div>
+    </>
   );
 };
 

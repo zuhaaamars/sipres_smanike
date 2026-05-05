@@ -1,7 +1,7 @@
 from app.app import create_app, db
 # Import Model Autentikasi & Profile
-from app.models.user_models import User
-from app.models.admin_models import Admin
+from be_sipres_smanike.app.models.user.user_models import User
+from be_sipres_smanike.app.models.user.admin_models import Admin
 # Import Master Data
 from app.models.master.jurusan_models import Jurusan
 from app.models.master.kelas_models import Kelas

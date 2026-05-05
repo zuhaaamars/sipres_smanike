@@ -109,7 +109,6 @@ const Login = () => {
                 <option value="guru">Guru / Wali Kelas</option>
                 <option value="kepsek">Kepala Sekolah</option>
                 <option value="staf">Tenaga Kependidikan (TU)</option>
-                <option value="admin">Admin</option>
               </select>
               <ShieldCheck className="absolute right-4 text-[#8d6e63] pointer-events-none" size={20} />
             </div>

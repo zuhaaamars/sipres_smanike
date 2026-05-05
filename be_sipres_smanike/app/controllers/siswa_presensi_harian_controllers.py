@@ -5,14 +5,14 @@ from flask import request, jsonify
 from datetime import datetime
 from app.app import db
 
-from app.models.siswa_presensi_harian_models import PresensiHarian
-from app.models.siswa_models import Siswa
+from app.models.presensi.siswa_presensi_harian_models import PresensiHarian
+from app.models.user.siswa_models import Siswa
 
 UPLOAD_PATH = 'static/uploads/presensi/harian'
 
 # KONFIGURASI GEOFENCING
-SCHOOL_LAT = -7.542078
-SCHOOL_LON = 111.6486213
+SCHOOL_LAT = -7.556146
+SCHOOL_LON = 111.659973
 MAX_RADIUS_METERS = 100
 
 
@@ -230,7 +230,7 @@ def get_riwayat_presensi(siswa_id):
 # =========================
 def get_rekap_harian_guru():
     try:
-        from app.models.siswa_models import Siswa
+        from app.models.user.siswa_models import Siswa
         from app.models.master.kelas_models import Kelas
 
         results = db.session.query(
@@ -254,7 +254,7 @@ def get_rekap_harian_guru():
             foto_url = None
             if r.foto_bukti:
                 path = r.foto_bukti.replace("\\", "/")
-                foto_url = f"http://localhost:5000/{path}"
+                foto_url = f"http://localhost:5000/static/{path.split('static/')[-1]}"
 
             output.append({
                 "id": r.id,
