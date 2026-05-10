@@ -138,6 +138,12 @@ const SidebarTU = () => {
                   </div>
                 </Link>
 
+                <Link to="/staff/ImportJam" onClick={() => setIsOpen(false)}>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isActive('/staff/ImportJam')}`}>
+                    📥 Data Jam Pelajaran
+                  </div>
+                </Link>
+
                 {/* 🔥 TAMBAHAN BARU */}
                 <Link to="/staff/ImportMapel" onClick={() => setIsOpen(false)}>
                   <div className={`px-3 py-2 rounded-lg text-sm ${isActive('/staff/ImportMapel')}`}>

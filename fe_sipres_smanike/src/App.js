@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Import Komponen
 import Navbar from './components/navbar.jsx'; 
 import SidebarSiswa from './components/Sidebar-siswa.jsx'; 
-import SidebarMaster from './components/Sidebar-master.jsx'; 
 import SidebarGuru from './components/Sidebar-guru.jsx'; 
 import SidebarTU from './components/Sidebar-staff.jsx';
+import SidebarSuperadmin from './components/Sidebar-superadmin.jsx';
 
 // Import Pages LOGIN DAN DAFTAR
 import LandingPage from './pages/LandingPage';
@@ -32,10 +32,18 @@ import DashboardStaff from './pages/staff/Dashboard-staff';
 import VerifikasiUser from './pages/staff/VerifikasiUser.jsx';
 import ImportGuru from './pages/staff/ImportGuru.jsx';
 import ImportSiswa from './pages/staff/ImportSiswa.jsx';
+import ImportJam from './pages/staff/ImportJam.jsx';
 import MasterMapel from './pages/staff/ImportMapel.jsx';
 import JadwalPelajaran from './pages/staff/JadwalPelajaran.jsx';
 
-// 1. NAVBAR UNTUK LOGIN DAN DAFTAR
+//Import pages superadmin
+import DashboardSuperadmin from './pages/superadmin/Dashboard-superadmin';
+import UsersSuperadmin from './pages/superadmin/Users-superadmin.jsx';
+import MasterDataSuperadmin from './pages/superadmin/MasterData-superadmin.jsx';
+import JadwalSuperadmin from './pages/superadmin/Jadwal-superadmin.jsx';
+import PresensiSuperadmin from './pages/superadmin/Presensi-superadmin.jsx';
+
+// NAVBAR UNTUK LOGIN DAN DAFTAR
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
@@ -45,7 +53,7 @@ const MainLayout = ({ children }) => (
   </>
 );
 
-// 2. SIDEBAR UNTUK SISWA
+// SIDEBAR UNTUK SISWA
 const DashboardLayout = ({ children }) => (
   <div className="flex min-h-screen">
     <SidebarSiswa />
@@ -55,7 +63,7 @@ const DashboardLayout = ({ children }) => (
   </div>
 );
 
-// 3. SIDEBAR UNTUK GURU
+// SIDEBAR UNTUK GURU
 const GuruLayout = ({ children }) => (
   <div className="flex min-h-screen">
     <SidebarGuru />
@@ -65,11 +73,21 @@ const GuruLayout = ({ children }) => (
   </div>
 );
 
-// 5. Sidebar Tendik
+// Sidebar Tendik
 const StaffLayout = ({ children }) => (
   <div className="flex min-h-screen">
     <SidebarTU />
     <div className="flex-1 bg-[#f4f4f4]">
+      {children}
+    </div>
+  </div>
+);
+
+// SIDEBAR SUPERADMIN
+const SuperadminLayout = ({ children }) => (
+  <div className="flex min-h-screen">
+    <SidebarSuperadmin />
+    <div className="flex-1 bg-[#f4f4f4] md:ml-64">
       {children}
     </div>
   </div>
@@ -105,8 +123,16 @@ function App() {
         <Route path="/staff/VerifikasiUser" element={<StaffLayout><VerifikasiUser/></StaffLayout>} />
         <Route path="/staff/ImportGuru" element={<StaffLayout><ImportGuru/></StaffLayout>} />
         <Route path="/staff/ImportSiswa" element={<StaffLayout><ImportSiswa/></StaffLayout>} />
+        <Route path="/staff/ImportJam" element={<StaffLayout><ImportJam/></StaffLayout>} />
         <Route path="/staff/ImportMapel" element={<StaffLayout><MasterMapel/></StaffLayout>} />
         <Route path="/staff/JadwalPelajaran" element={<StaffLayout><JadwalPelajaran/></StaffLayout>} />
+
+        {/* --- SUPERADMIN --- */}
+        <Route path="/superadmin/Dashboard-superadmin" element={<SuperadminLayout><DashboardSuperadmin /></SuperadminLayout>}/>
+        <Route path="/superadmin/Users-superadmin" element={<SuperadminLayout><UsersSuperadmin /></SuperadminLayout>}/>
+        <Route path="/superadmin/MasterData-superadmin" element={<SuperadminLayout><MasterDataSuperadmin /></SuperadminLayout>}/>
+        <Route path="/superadmin/Jadwal-superadmin" element={<SuperadminLayout><JadwalSuperadmin /></SuperadminLayout>}/>
+        <Route path="/superadmin/Presensi-superadmin" element={<SuperadminLayout><PresensiSuperadmin /></SuperadminLayout>}/>
 
       </Routes>
     </Router>

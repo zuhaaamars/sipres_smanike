@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { CheckCircle, XCircle, User, Shield, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, User, Shield, Loader2, AlertCircle } from 'lucide-react';
 
 const VerifikasiUser = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Ambil daftar user yang belum diverifikasi
+  // 🔥 Fungsi untuk mengambil daftar user (Backend port 5001)
   const fetchPendingUsers = async () => {
     setIsLoading(true);
+    setErrorMessage("");
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/pending-users');
-      setPendingUsers(response.data.data);
+      const response = await axios.get('http://localhost:5001/api/auth/pending-users');
+      
+      // PERBAIKAN: Menangani berbagai format response agar tidak crash
+      // Cek apakah data ada di response.data.data atau langsung di response.data
+      const rawData = response.data.data || response.data;
+      
+      if (Array.isArray(rawData)) {
+        setPendingUsers(rawData);
+      } else {
+        console.error("Format data bukan array:", rawData);
+        setPendingUsers([]);
+      }
     } catch (error) {
       console.error("Gagal mengambil data:", error);
-      alert("Gagal mengambil daftar pendaftar");
+      setErrorMessage("Gagal terhubung ke server. Pastikan Flask aktif.");
     } finally {
       setIsLoading(false);
     }
@@ -25,16 +37,18 @@ const VerifikasiUser = () => {
     fetchPendingUsers();
   }, []);
 
-  // Fungsi untuk menyetujui user
+  // 🔥 Fungsi untuk menyetujui user (Method PUT sesuai permintaan sebelumnya)
   const handleApprove = async (userId) => {
     setActionLoading(userId);
     try {
-      const response = await axios.put(`http://localhost:5000/api/auth/approve/${userId}`);
-      alert(response.data.message);
-      // Update list lokal agar user yang sudah di-approve hilang dari daftar
-      setPendingUsers(pendingUsers.filter(user => user.id !== userId));
+      const response = await axios.put(`http://localhost:5001/api/auth/approve/${userId}`);
+      
+      // Jika sukses, hapus user dari list lokal agar tabel terupdate otomatis
+      setPendingUsers(prev => prev.filter(user => user.id !== userId));
+      alert(response.data.message || "User berhasil diverifikasi!");
     } catch (error) {
-      alert("Gagal memverifikasi user");
+      console.error("Gagal approve:", error);
+      alert(error.response?.data?.message || "Gagal memverifikasi user");
     } finally {
       setActionLoading(null);
     }
@@ -43,12 +57,30 @@ const VerifikasiUser = () => {
   return (
     <div className="min-h-screen bg-[#fdfaf6] pt-28 pb-10 px-5 font-sans">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <Shield className="text-[#E67E22]" size={32} />
-          <h1 className="text-3xl font-extrabold text-[#3e2723]">
-            VERIFIKASI <span className="text-[#E67E22]">AKUN BARU</span>
-          </h1>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Shield className="text-[#E67E22]" size={32} />
+            <h1 className="text-3xl font-extrabold text-[#3e2723]">
+              VERIFIKASI <span className="text-[#E67E22]">AKUN BARU</span>
+            </h1>
+          </div>
+          <button 
+            onClick={fetchPendingUsers}
+            className="text-sm font-bold text-[#E67E22] hover:underline"
+          >
+            Refresh Data
+          </button>
         </div>
+
+        {/* Notifikasi Error jika Server Mati */}
+        {errorMessage && (
+          <div className="mb-6 flex items-center gap-2 bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+            <AlertCircle size={20} />
+            <p className="text-sm font-medium">{errorMessage}</p>
+          </div>
+        )}
 
         <div className="bg-white rounded-[25px] shadow-xl border-2 border-[#3e2723]/10 overflow-hidden">
           {isLoading ? (
@@ -60,7 +92,7 @@ const VerifikasiUser = () => {
             <div className="p-20 text-center text-[#8d6e63]">
               <XCircle className="mx-auto mb-4 opacity-20" size={60} />
               <p className="font-bold text-xl text-[#3e2723]">Tidak ada antrean verifikasi</p>
-              <p>Semua pendaftar baru telah diproses.</p>
+              <p>Semua pendaftar baru telah diproses atau data kosong.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -80,12 +112,17 @@ const VerifikasiUser = () => {
                           <div className="w-10 h-10 rounded-full bg-[#efebe9] flex items-center justify-center text-[#3e2723]">
                             <User size={20} />
                           </div>
-                          <span className="font-bold text-[#3e2723]">{user.username}</span>
+                          <div>
+                            <p className="font-bold text-[#3e2723] leading-none mb-1">{user.username}</p>
+                            <p className="text-[10px] text-gray-400">ID: {user.id}</p>
+                          </div>
                         </div>
                       </td>
                       <td className="py-5 px-6">
                         <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
-                          user.role === 'siswa' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                          user.role === 'siswa' ? 'bg-blue-100 text-blue-700' : 
+                          user.role === 'guru' ? 'bg-orange-100 text-orange-700' :
+                          'bg-purple-100 text-purple-700'
                         }`}>
                           {user.role}
                         </span>
@@ -113,7 +150,7 @@ const VerifikasiUser = () => {
         </div>
         
         <p className="mt-6 text-center text-sm text-[#8d6e63]">
-          Menampilkan {pendingUsers.length} pendaftar yang membutuhkan persetujuan.
+          Menampilkan <strong>{pendingUsers.length}</strong> pendaftar yang membutuhkan persetujuan.
         </p>
       </div>
     </div>

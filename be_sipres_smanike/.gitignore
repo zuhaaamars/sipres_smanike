@@ -1,1 +1,38 @@
-/.env
+# ENV
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+instance/
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+
+# Flask migrations cache
+migrations/versions/*.pyc
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build React
+build/
+dist/
+
+# Uploads (file user / gambar)
+static/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -21,14 +21,3 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-# TAMBAHAN REVISI: Tabel Master Data Sekolah
-class MasterSiswa(db.Model):
-    __tablename__ = 'master_siswa'
-    nis = db.Column(db.String(20), primary_key=True)
-    nama_lengkap = db.Column(db.String(100), nullable=False)
-
-class MasterGuru(db.Model):
-    __tablename__ = 'master_guru'
-    nip = db.Column(db.String(20), primary_key=True)
-    nama_lengkap = db.Column(db.String(100), nullable=False)

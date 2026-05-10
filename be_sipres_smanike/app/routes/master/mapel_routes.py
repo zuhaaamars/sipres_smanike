@@ -1,21 +1,37 @@
-from flask import Blueprint, jsonify
-from app.controllers.mapel_controller import (
-    get_mapel_controller,
-    tambah_mapel_controller
+from flask import Blueprint
+from app.controllers.master_mapel_controllers import (
+    get_all_mapel,
+    create_mapel,
+    delete_mapel,
+    update_mapel   # 🔥 TAMBAH INI
 )
 
 mapel_bp = Blueprint('mapel_bp', __name__)
 
-
-# 🔹 GET semua mapel
+# =========================
+# GET ALL MAPEL
+# =========================
 @mapel_bp.route('/', methods=['GET'])
 def get_mapel():
-    response, status = get_mapel_controller()
-    return jsonify(response), status
+    return get_all_mapel()
 
-
-# 🔹 POST tambah mapel
+# =========================
+# ADD MAPEL
+# =========================
 @mapel_bp.route('/', methods=['POST'])
 def tambah_mapel():
-    response, status = tambah_mapel_controller()
-    return jsonify(response), status
+    return create_mapel()
+
+# =========================
+# UPDATE MAPEL 🔥 TAMBAHAN
+# =========================
+@mapel_bp.route('/<int:id>', methods=['PUT'])
+def edit_mapel(id):
+    return update_mapel(id)
+
+# =========================
+# DELETE MAPEL
+# =========================
+@mapel_bp.route('/<int:id>', methods=['DELETE'])
+def hapus_mapel(id):
+    return delete_mapel(id)

@@ -20,7 +20,7 @@ const DashboardGuru = () => {
       try {
         const token = localStorage.getItem('token');
 
-        const res = await axios.get('http://localhost:5000/api/auth/me', {
+        const res = await axios.get('http://localhost:5001/api/auth/me', {
           headers: {
             Authorization: `Bearer ${token}`
           }

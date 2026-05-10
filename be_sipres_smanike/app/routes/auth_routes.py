@@ -1,27 +1,51 @@
-from flask import Blueprint
-# Tambahkan semua fungsi update yang baru dibuat di controller
-from app.controllers.auth_controllers import (
-    login, 
-    register_user, 
-    update_siswa_profile, 
-    update_guru_profile, 
-    update_staf_profile, 
-    get_pending_users,  
-    approve_user
-)
+from flask import Blueprint, request
+from app.controllers.auth_controllers import AuthController
 
 auth_bp = Blueprint('auth', __name__)
 
-# --- Tahap 1: Pendaftaran Akun & Data Umum ---
-# Endpoint: /api/login & /api/register
-auth_bp.route('/login', methods=['POST'])(login)
-auth_bp.route('/register', methods=['POST'])(register_user)
+# Flask-CORS akan menangani OPTIONS otomatis jika methods POST didaftarkan
+@auth_bp.route('/register', methods=['POST'])
+def register_route():
+    return AuthController.register()
 
-# Endpoint ini yang akan dipanggil di halaman Daftar-siswa.jsx, Daftar-guru.jsx, dsb.
-auth_bp.route('/siswa/update', methods=['POST'])(update_siswa_profile)
-auth_bp.route('/guru/update', methods=['POST'])(update_guru_profile)
-auth_bp.route('/staf/update', methods=['POST'])(update_staf_profile)
+@auth_bp.route('/login', methods=['POST'])
+def login_route():
+    return AuthController.login()
 
-# Endpoint untuk ambil daftar user
-auth_bp.route('/pending-users', methods=['GET'])(get_pending_users)
-auth_bp.route('/approve/<int:user_id>', methods=['PUT'])(approve_user)
+@auth_bp.route('/siswa/update', methods=['POST'])
+def siswa_update():
+    return AuthController.update_siswa_profile()
+
+@auth_bp.route('/staff/update', methods=['POST'])
+def staff_update():
+    return AuthController.update_staff_profile()
+
+@auth_bp.route('/guru/update', methods=['POST'])
+def guru_update():
+    return AuthController.update_guru_profile()
+
+# Tambahkan baris ini di auth_routes.py
+@auth_bp.route('/pending-users', methods=['GET'])
+def pending_users():
+    return AuthController.get_all_pending_users() # Sesuaikan nama fungsinya
+
+@auth_bp.route('/verify/<int:user_id>', methods=['POST'])
+def verify(user_id):
+    return AuthController.verify_user(user_id)
+
+# Di auth_routes.py
+@auth_bp.route('/approve/<int:user_id>', methods=['PUT']) # Samakan dengan React
+def approve_user(user_id):
+    return AuthController.verify_user(user_id)
+
+@auth_bp.route('/users', methods=['GET'])
+def get_users():
+    return AuthController.get_all_users()
+
+@auth_bp.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    return AuthController.delete_user(user_id)
+
+@auth_bp.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    return AuthController.update_user(user_id)

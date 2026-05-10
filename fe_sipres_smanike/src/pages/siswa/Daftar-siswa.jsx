@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const DaftarSiswa = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  // Mengambil userId dari halaman pendaftaran sebelumnya
   const userId = location.state?.userId;
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [kelasList, setKelasList] = useState([]);
 
   const [siswaProfile, setSiswaProfile] = useState({
     nisn: '',
@@ -15,61 +19,72 @@ const DaftarSiswa = () => {
     no_telp_ortu: ''
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  // 🔥 1. LOGIKA AMBIL DATA MASTER KELAS (DITAMBAHKAN)
+  useEffect(() => {
+    const fetchKelas = async () => {
+      try {
+        // Pastikan port 5001 dan endpoint /api/kelas sesuai dengan backend
+        const res = await axios.get("http://localhost:5001/api/kelas");
+        
+        // Cek jika res.data adalah array (sesuai return jsonify k.id, k.kelas kamu)
+        if (Array.isArray(res.data)) {
+          setKelasList(res.data);
+        } else if (res.data.data) {
+          setKelasList(res.data.data);
+        }
+      } catch (err) {
+        console.error("Gagal load daftar kelas. Pastikan backend jalan di port 5001:", err);
+      }
+    };
+
+    fetchKelas();
+  }, []);
+
+  // 🔥 2. PROTEKSI HALAMAN (DITAMBAHKAN)
+  // Jika tidak ada userId (akses paksa lewat URL), balikkan ke halaman daftar awal
+  useEffect(() => {
+    if (!userId) {
+      alert("Sesi pendaftaran tidak valid. Silakan isi form pendaftaran awal.");
+      navigate("/daftar");
+    }
+  }, [userId, navigate]);
 
   const handleChange = (e) => {
-    const { id, name, value } = e.target;
-    setSiswaProfile({ ...siswaProfile, [id || name]: value });
+    setSiswaProfile({
+      ...siswaProfile,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!userId) {
-      alert("ID Pengguna tidak ditemukan. Silakan daftar dari awal.");
-      navigate('/daftar');
+      alert("User ID tidak ditemukan. Silakan daftar ulang.");
+      navigate("/daftar");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        alert("Token tidak ditemukan. Silakan login ulang.");
-        navigate('/login');
-        return;
-      }
-
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/siswa/update',
+      // Mengirim data ke endpoint update profil siswa
+      const res = await axios.post(
+        "http://localhost:5001/api/auth/siswa/update",
         {
-          userId: userId,
+          user_id: userId,
           ...siswaProfile
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
         }
       );
 
-      if (response.data.status === "success" || response.status === 200) {
-        alert("Profil Berhasil Dilengkapi!");
-        navigate('/login'); 
+      if (res.data.status === "success" || res.status === 201 || res.status === 200) {
+        alert("Profil siswa berhasil dilengkapi! Silakan login.");
+        navigate("/login");
       }
 
     } catch (err) {
-      console.error("Update Error:", err.response?.data);
-
-      if (err.response?.status === 401) {
-        alert("Sesi login habis / token invalid. Login ulang.");
-        navigate('/login');
-      } else {
-        alert(err.response?.data?.message || "Gagal melengkapi profil.");
-      }
-
+      console.error("Error update profil:", err);
+      alert(err.response?.data?.message || "Gagal menyimpan profil siswa");
     } finally {
       setIsLoading(false);
     }
@@ -84,89 +99,86 @@ const DaftarSiswa = () => {
           PROFIL SISWA
         </h1>
 
-        <p className="text-center mb-[20px] text-[14px] text-[#6d4c41]">
-          Lengkapi NISN dan Data Orang Tua (User ID: {userId})
-        </p>
-
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
 
           {/* NISN */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">NISN</label>
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-[#3e2723] text-sm">NISN</label>
             <input
-              id="nisn"
+              name="nisn"
               type="text"
-              placeholder="1234567890"
+              placeholder="Contoh: 1234567890"
               onChange={handleChange}
               required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a] focus:shadow-[0_0_0_3px_rgba(188,143,90,0.2)]"
+              className="h-10 border border-[#ddd] rounded-lg px-3 outline-none focus:border-[#6d4c41]"
             />
           </div>
 
-          {/* Kelas */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Pilih Kelas</label>
+          {/* KELAS (DROPDOWN OTOMATIS) */}
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-[#3e2723] text-sm">Kelas</label>
             <select
-              id="kelas_id"
+              name="kelas_id"
               onChange={handleChange}
+              value={siswaProfile.kelas_id}
               required
-              defaultValue=""
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              className="h-10 border border-[#ddd] rounded-lg px-3 outline-none bg-white focus:border-[#6d4c41]"
             >
-              <option value="" disabled>-- Pilih Kelas --</option>
-              <option value="1">Kelas X</option>
-              <option value="2">Kelas XI</option>
-              <option value="3">Kelas XII</option>
+              <option value="">-- Pilih Kelas --</option>
+              {kelasList.map((k) => (
+                <option key={k.id} value={k.id}>
+                  {/* k.kelas diambil dari return jsonify backend kamu tadi */}
+                  {k.kelas} {k.nama_jurusan ? `- ${k.nama_jurusan}` : ""}
+                </option>
+              ))}
             </select>
+            {kelasList.length === 0 && (
+              <span className="text-xs text-red-500 italic">* Belum ada data kelas di database</span>
+            )}
           </div>
 
-          {/* Nama Ortu */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Nama Orang Tua</label>
+          {/* NAMA ORTU */}
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-[#3e2723] text-sm">Nama Orang Tua</label>
             <input
-              id="nama_ortu"
+              name="nama_ortu"
               type="text"
+              placeholder="Masukkan nama lengkap orang tua"
               onChange={handleChange}
               required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              className="h-10 border border-[#ddd] rounded-lg px-3 outline-none focus:border-[#6d4c41]"
             />
           </div>
 
-          {/* No HP Ortu */}
-          <div className="flex items-center mb-[22px] gap-[30px] max-md:flex-col">
-            <label className="basis-[220px] font-bold text-[#3e2723]">No.HP Orang Tua</label>
-            <div className="flex-1 flex border border-[#ddd] rounded-[8px] overflow-hidden">
-              <div className="px-4 bg-[#efebe9] flex items-center gap-2 font-semibold text-[#3e2723] whitespace-nowrap">
-                <div className="px-4 bg-[#efebe9] flex flex-col items-center justify-center font-semibold text-[#3e2723] leading-tight">
-                  <span className="text-[13px] font-bold">ID</span>
-                  <span className="text-[13px] font-bold">+62</span>
-                </div>
-                </div>
-              <input type="text" name="no_hp" placeholder="8xxxxxxxx"
-                onChange={handleChange} required
-                className="w-full px-[15px] outline-none"
-              />
-            </div>
+          {/* NO HP ORTU */}
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-[#3e2723] text-sm">No HP Orang Tua</label>
+            <input
+              name="no_telp_ortu"
+              type="tel"
+              placeholder="08xxxxxxxxxx"
+              onChange={handleChange}
+              required
+              className="h-10 border border-[#ddd] rounded-lg px-3 outline-none focus:border-[#6d4c41]"
+            />
           </div>
 
-          {/* BUTTON */}
-          <div className="flex justify-between mt-[50px] gap-5 max-md:flex-col-reverse">
-            <button
-              type="button"
-              onClick={() => navigate('/daftar')}
-              className="bg-[#efebe9] px-[35px] py-[12px] rounded-[10px] font-bold hover:bg-[#d7ccc8]"
-            >
-              Kembali
-            </button>
+          {/* BUTTON SIMPAN */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 bg-[#3e2723] text-white rounded-xl font-bold hover:bg-[#2d1b17] transition disabled:bg-[#bcaaa4] mt-4"
+          >
+            {isLoading ? "Sedang Menyimpan..." : "Simpan Profil & Selesai"}
+          </button>
 
-  <button
-    type="submit"
-    disabled={isLoading}
-    className="bg-[#6d4c41] text-white px-[30px] py-[12px] rounded-[10px] font-bold hover:bg-[#5d4037] transition disabled:bg-[#bcaaa4]"
-  >
-    {isLoading ? "Menyimpan..." : "Selesai & Daftar"}
-  </button>
-</div>
+          <button
+            type="button"
+            onClick={() => navigate('/daftar')}
+            className="w-full h-10 bg-[#efebe9] text-[#3e2723] rounded-xl font-bold hover:bg-[#d7ccc8] transition"
+          >
+            Kembali
+          </button>
 
         </form>
       </div>

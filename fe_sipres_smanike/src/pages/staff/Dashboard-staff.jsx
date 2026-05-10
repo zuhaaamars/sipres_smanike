@@ -25,7 +25,7 @@ const DashboardStaff = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get("http://localhost:5000/api/auth/pending-users", {
+        const res = await axios.get("http://localhost:5001/api/auth/pending-users", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -55,7 +55,7 @@ const DashboardStaff = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(`http://localhost:5000/api/auth/approve/${id}`, {}, {
+      await axios.put(`http://localhost:5001/api/auth/approve/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
