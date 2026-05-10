@@ -25,18 +25,29 @@ const DaftarStaff = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) {
+      alert("User ID tidak ditemukan, ulangi dari daftar");
+      navigate('/daftar');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/staf', {
-        ...formData,
-        user_id: userId
-      });
+      const res = await axios.post(
+        "http://localhost:5001/api/auth/staf/update",
+        {
+          user_id: userId,
+          ...formData
+        }
+      );
 
-      if (response.status === 201) {
-        alert("Profil staf berhasil disimpan!");
-        navigate('/login');
+      if (res.data.status === "success") {
+        alert("Profil staf berhasil disimpan");
+        navigate("/login");
       }
+
     } catch (err) {
       alert(err.response?.data?.message || "Gagal menyimpan data staf");
     } finally {
@@ -45,95 +56,72 @@ const DaftarStaff = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex flex-col items-center px-5 py-24 font-sans text-[#6d4c41]">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex items-center justify-center px-5 pt-24 pb-10 font-sans">
 
-      <div className="bg-white w-full max-w-[850px] px-[70px] py-[50px] rounded-[30px] border-2 border-[#3e2723] shadow-[0_15px_35px_rgba(0,0,0,0.04)]">
+      <div className="bg-white w-full max-w-[600px] px-8 md:px-12 py-10 rounded-[30px] border-2 border-[#3e2723] shadow-xl">
 
-        <h2 className="text-center text-[2rem] font-extrabold mb-[40px] tracking-wide text-[#4e342e]">
+        <h2 className="text-center text-[#3e2723] text-2xl font-extrabold mb-8 uppercase">
           LENGKAPI PROFIL STAF
         </h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
 
           {/* NIP */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold">NIP (Opsional)</label>
-            <input
-              type="text"
-              name="nip"
-              placeholder="Kosongkan jika honorer"
-              onChange={handleChange}
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
-            />
-          </div>
+          <input
+            name="nip"
+            onChange={handleChange}
+            placeholder="NIP (Opsional)"
+            className="w-full h-11 px-4 border border-[#ddd] rounded-xl focus:border-[#6d4c41] outline-none"
+          />
 
           {/* Nama */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold">Nama Lengkap</label>
-            <input
-              type="text"
-              name="nama_lengkap"
-              onChange={handleChange}
-              required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
-            />
-          </div>
+          <input
+            name="nama_lengkap"
+            onChange={handleChange}
+            placeholder="Nama Lengkap"
+            required
+            className="w-full h-11 px-4 border border-[#ddd] rounded-xl focus:border-[#6d4c41] outline-none"
+          />
 
           {/* Bagian */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold">Bagian</label>
-            <select
-              name="bagian"
-              onChange={handleChange}
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
-            >
-              <option value="">-- Pilih Bagian --</option>
-              <option value="Tata Usaha">Tata Usaha</option>
-              <option value="Perpustakaan">Perpustakaan</option>
-              <option value="Administrasi">Administrasi</option>
-              <option value="Operator Sekolah">Operator Sekolah</option>
-            </select>
-          </div>
+          <select
+            name="bagian"
+            onChange={handleChange}
+            className="w-full h-11 px-4 border border-[#ddd] rounded-xl bg-white"
+          >
+            <option value="">-- Pilih Bagian --</option>
+            <option value="Tata Usaha">Tata Usaha</option>
+            <option value="Perpustakaan">Perpustakaan</option>
+            <option value="Administrasi">Administrasi</option>
+            <option value="Operator Sekolah">Operator Sekolah</option>
+          </select>
 
           {/* No HP */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold">Nomor HP</label>
-
-            <div className="flex-1 w-full flex border border-[#e0d6c7] rounded-[10px] overflow-hidden">
-              <div className="flex items-center justify-center px-4 bg-[#f5e6d3] border-r border-[#e0d6c7] text-[#4e342e] font-semibold">
-                +62
-              </div>
-
-              <input
-                type="text"
-                name="no_hp"
-                placeholder="8xxxxxxxx"
-                onChange={handleChange}
-                className="flex-1 px-[15px] py-[12px] outline-none"
-              />
-            </div>
-          </div>
+          <input
+            name="no_hp"
+            onChange={handleChange}
+            placeholder="No HP"
+            required
+            className="w-full h-11 px-4 border border-[#ddd] rounded-xl focus:border-[#6d4c41] outline-none"
+          />
 
           {/* BUTTON */}
-          <div className="flex justify-between mt-[50px] gap-5 max-md:flex-col-reverse">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 bg-[#3e2723] text-white rounded-xl font-bold hover:bg-[#2d1b17] transition disabled:bg-[#bcaaa4]"
+          >
+            {isLoading ? "Menyimpan..." : "Simpan Profil"}
+          </button>
 
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="bg-[#efebe9] text-[#4e342e] px-[35px] py-[12px] rounded-[10px] font-bold hover:bg-[#e0d6c7] transition"
-            >
-              Kembali
-            </button>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-[#6d4c41] text-white px-[35px] py-[12px] rounded-[10px] font-bold hover:bg-[#5d4037] transition disabled:bg-[#bcaaa4]"
-            >
-              {isLoading ? "Menyimpan..." : "Simpan Profil"}
-            </button>
-
-          </div>
+          {/* BACK */}
+          <button
+            type="button"
+            onClick={() => navigate('/daftar')}
+            className="w-full h-10 bg-[#efebe9] text-[#3e2723] rounded-xl font-bold hover:bg-[#d7ccc8]"
+          >
+            Kembali
+          </button>
 
         </form>
       </div>

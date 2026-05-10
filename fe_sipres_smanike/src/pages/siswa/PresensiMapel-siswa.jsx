@@ -1,167 +1,344 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Html5Qrcode } from "html5-qrcode";
 import axios from 'axios';
-import { Camera, CheckCircle2, Loader2 } from 'lucide-react';
+import {
+  Camera,
+  CheckCircle2,
+  Loader2,
+  XCircle
+} from 'lucide-react';
 
 const PresensiMapelSiswa = () => {
-  const [isScanning, setIsScanning] = useState(false);
-  const [scanResult, setScanResult] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
 
-  const scannerRef = useRef(null);
+      // =========================
+      // STATE
+      // =========================
+      const [isScanning, setIsScanning] = useState(false);
+      const [showScanner, setShowScanner] = useState(false);
+      const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleStartScan = async () => {
-    setShowScanner(true);
-    setIsScanning(true);
+      const [scanResult, setScanResult] = useState(null);
+      const [errorMessage, setErrorMessage] = useState('');
+
+      const scannerRef = useRef(null);
+
+    // =========================
+    // START SCANNER
+    // =========================
+    const handleStartScan = async () => {
+
+      setShowScanner(true);
+      setIsScanning(true);
+      setErrorMessage('');
+
+      // 🔥 kasih delay agar div reader muncul dulu
+      setTimeout(async () => {
+
+        try {
+
+          const html5QrCode = new Html5Qrcode("reader");
+
+          scannerRef.current = html5QrCode;
+
+          await html5QrCode.start(
+            { facingMode: "environment" },
+
+            {
+              fps: 10,
+              qrbox: {
+                width: 250,
+                height: 250
+              }
+            },
+
+            async (decodedText) => {
+
+              await stopScanner();
+
+              handleSuccessFlow(decodedText);
+            }
+          );
+
+        } catch (err) {
+
+          console.error(err);
+
+          setErrorMessage("Kamera gagal dibuka");
+
+          setIsScanning(false);
+          setShowScanner(false);
+        }
+
+      }, 300); // 🔥 delay render
+    };
+
+  // =========================
+  // STOP SCANNER
+  // =========================
+  const stopScanner = async () => {
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
 
-      const html5QrCode = new Html5Qrcode("reader");
-      scannerRef.current = html5QrCode;
+      if (scannerRef.current) {
 
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        (text) => {
-          html5QrCode.stop();
-          handleSuccessFlow(text);
-        }
-      );
+        await scannerRef.current.stop();
+        await scannerRef.current.clear();
+
+        scannerRef.current = null;
+      }
 
     } catch (err) {
-      alert("Kamera Error: " + err.message);
-      setIsScanning(false);
-      setShowScanner(false);
+      console.log(err);
     }
-  };
 
-  const stopScanner = async () => {
-    try {
-      if (scannerRef.current) {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-      }
-    } catch {}
-  };
-
-  const handleSuccessFlow = async (data) => {
     setIsScanning(false);
     setShowScanner(false);
+  };
+
+  // =========================
+  // HANDLE HASIL SCAN
+  // =========================
+  const handleSuccessFlow = async (qrToken) => {
+
     setIsProcessing(true);
 
     try {
-      const token = localStorage.getItem('token');
 
+      // AMBIL TOKEN LOGIN
+      const token = localStorage.getItem('token');
+      const siswa_id = localStorage.getItem('siswa_id');
+
+      // HIT API BACKEND
       const response = await axios.post(
-        'http://localhost:5000/api/presensi/mapel',
-        { qr_code: data },
-        { headers: { Authorization: `Bearer ${token}` } }
+        'http://localhost:5001/api/presensi-mapel/scan',
+
+        {
+          qr_token: qrToken,
+          siswa_id: siswa_id
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
+      // SUCCESS
       setScanResult({
+        success: true,
         message: response.data.message,
-        raw: data
+        data: response.data.data
       });
 
     } catch (err) {
-      alert(err.response?.data?.message || "Gagal presensi");
+
+      console.error(err);
+
+      // ERROR
+      setScanResult({
+        success: false,
+        message:
+          err.response?.data?.message ||
+          "Gagal melakukan presensi"
+      });
+
     } finally {
+
       setIsProcessing(false);
     }
   };
 
+  // =========================
+  // RESET
+  // =========================
+  const resetScan = () => {
+
+    setScanResult(null);
+    setErrorMessage('');
+  };
+
+  // =========================
+  // UI
+  // =========================
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-[180px] pt-[100px] md:pt-[120px] font-sans text-[#6d4c41]">
 
-      {/* HEADER */}
-      <header className="flex justify-center items-center mb-[30px]">
-        <div className="text-center">
-          <h1 className="text-[24px] font-extrabold text-[#6d4c41] tracking-tight">
-            PRESENSI MATA PELAJARAN
+    <div className="min-h-screen bg-[#f8fafc] p-[20px] md:ml-[250px]">
+
+      <div className="max-w-[600px] mx-auto">
+
+        {/* =========================
+            HEADER
+        ========================= */}
+        <div className="text-center mb-[30px]">
+
+          <h1 className="text-[28px] font-extrabold text-[#3e2723]">
+            PRESENSI MAPEL SISWA
           </h1>
-          <p className="text-[14px] text-[#6d4c41] mt-[5px]">
-            Scan barcode guru untuk melakukan absensi kehadiran
+
+          <p className="text-[#6d4c41] mt-[8px]">
+            Scan QR dari guru untuk melakukan presensi
           </p>
+
         </div>
-      </header>
 
-      {/* CONTENT */}
-      <div className="flex justify-center items-center w-full">
+        {/* =========================
+            CARD
+        ========================= */}
+        <div className="bg-white rounded-[24px] shadow-md p-[40px]">
 
-        <div className="bg-white rounded-[24px] p-[40px] flex flex-col items-center border border-[#f1f5f9] shadow-[0_10px_25px_rgba(0,0,0,0.02)] w-full max-w-[500px]">
-
-          {/* SCANNER */}
+          {/* =========================
+              SCANNER MODAL
+          ========================= */}
           {showScanner && (
-            <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]">
 
-              <div id="reader" className="w-full max-w-[400px] rounded-[24px] overflow-hidden"></div>
+            <div className="fixed inset-0 bg-black/90 z-[9999] flex flex-col items-center justify-center">
 
-              <div className="absolute top-[20px] bg-white/90 px-[10px] py-[8px] rounded-[10px] text-center text-[#6d4c41]">
-                <p>Arahkan kamera ke QR guru</p>
-              </div>
+              <div
+                id="reader"
+                className="w-full max-w-[400px] bg-white rounded-[16px] overflow-hidden"
+              ></div>
+
+              <p className="text-white mt-[20px]">
+                Arahkan kamera ke QR Code
+              </p>
 
               <button
-                className="absolute bottom-[20px] px-[20px] py-[10px] bg-white rounded-[10px] text-[#6d4c41]"
-                onClick={() => {
-                  stopScanner();
-                  setShowScanner(false);
-                  setIsScanning(false);
-                }}
+                onClick={stopScanner}
+                className="mt-[20px] bg-white px-[20px] py-[10px] rounded-[12px]"
               >
-                Tutup
+                Tutup Scanner
               </button>
 
             </div>
           )}
 
-          {/* LOADING */}
+          {/* =========================
+              LOADING
+          ========================= */}
           {isProcessing && (
-            <div className="flex flex-col items-center justify-center py-[40px] text-center text-[#6d4c41]">
-              <Loader2 className="animate-spin" size={48} />
-              <p>Memverifikasi data kehadiran...</p>
+
+            <div className="flex flex-col items-center py-[40px]">
+
+              <Loader2
+                size={60}
+                className="animate-spin text-[#3e2723]"
+              />
+
+              <p className="mt-[15px]">
+                Memverifikasi presensi...
+              </p>
+
             </div>
           )}
 
-          {/* SUCCESS */}
-          {scanResult && (
-            <div className="flex flex-col items-center text-center py-[40px] animate-[fadeIn_0.5s] text-[#6d4c41]">
-              <CheckCircle2 size={60} className="text-green-500" />
-              <h3 className="font-bold mt-[10px]">Absensi Berhasil!</h3>
+          {/* =========================
+              HASIL SCAN
+          ========================= */}
+          {scanResult && !isProcessing && (
 
-              <p className="font-semibold">{scanResult.message}</p>
+            <div className="flex flex-col items-center text-center">
+
+              {scanResult.success ? (
+                <CheckCircle2
+                  size={80}
+                  className="text-green-500"
+                />
+              ) : (
+                <XCircle
+                  size={80}
+                  className="text-red-500"
+                />
+              )}
+
+              <h2 className="text-[22px] font-bold mt-[15px]">
+
+                {scanResult.success
+                  ? 'Presensi Berhasil'
+                  : 'Presensi Gagal'}
+
+              </h2>
+
+              <p className="mt-[10px] text-[16px]">
+                {scanResult.message}
+              </p>
+
+              {/* DETAIL */}
+              {scanResult.data && (
+
+                <div className="mt-[20px] text-left bg-[#f8fafc] p-[20px] rounded-[16px] w-full">
+
+                  <p>
+                    <b>Mapel:</b>{" "}
+                    {scanResult.data.mapel}
+                  </p>
+
+                  <p>
+                    <b>Kelas:</b>{" "}
+                    {scanResult.data.kelas}
+                  </p>
+
+                  <p>
+                    <b>Jam:</b>{" "}
+                    {scanResult.data.jam}
+                  </p>
+
+                </div>
+              )}
 
               <button
-                className="mt-[15px] px-[20px] py-[8px] border border-[#6d4c41] text-[#6d4c41] rounded-[8px] font-semibold"
-                onClick={() => setScanResult(null)}
+                onClick={resetScan}
+                className="mt-[25px] bg-[#3e2723] text-white px-[24px] py-[12px] rounded-[12px]"
               >
                 Scan Lagi
               </button>
+
             </div>
           )}
 
-          {/* PLACEHOLDER */}
-          {!isScanning && !scanResult && !isProcessing && (
-            <div className="flex flex-col items-center gap-[15px] text-[#6d4c41]">
-              <Camera size={48} />
-              <p className="font-semibold text-[14px]">Kamera siap digunakan</p>
+          {/* =========================
+              ERROR
+          ========================= */}
+          {errorMessage && (
+
+            <div className="bg-red-100 text-red-600 p-[12px] rounded-[12px] mb-[20px] text-center">
+
+              {errorMessage}
+
             </div>
           )}
 
-          {/* BUTTON */}
-          {!isScanning && !scanResult && !isProcessing && (
-            <button
-              className="mt-[30px] bg-[#3e2723] text-white px-[40px] py-[18px] rounded-[16px] font-bold flex items-center gap-[12px] shadow-lg hover:translate-y-[-3px] hover:bg-[#3e2723] transition"
-              onClick={handleStartScan}
-            >
-              <Camera size={20} /> AKTIFKAN KAMERA
-            </button>
+          {/* =========================
+              BUTTON AKTIFKAN
+          ========================= */}
+          {!showScanner && !scanResult && !isProcessing && (
+
+            <div className="flex flex-col items-center">
+
+              <div className="bg-[#f8fafc] p-[30px] rounded-full">
+
+                <Camera
+                  size={60}
+                  className="text-[#3e2723]"
+                />
+
+              </div>
+
+              <p className="mt-[20px] text-center">
+                Klik tombol di bawah untuk mulai scan QR presensi mapel
+              </p>
+
+              <button
+                onClick={handleStartScan}
+                className="mt-[30px] bg-[#3e2723] hover:bg-[#5d4037] text-white px-[35px] py-[16px] rounded-[16px] font-bold"
+              >
+                AKTIFKAN KAMERA
+              </button>
+
+            </div>
           )}
 
         </div>
-
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const DaftarGuru = () => {
@@ -7,7 +7,6 @@ const DaftarGuru = () => {
   const location = useLocation();
 
   const userId = location.state?.userId;
-
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -28,16 +27,23 @@ const DaftarGuru = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) {
+      alert("User tidak ditemukan");
+      navigate("/daftar");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/guru/update',
+      const res = await axios.post(
+        "http://localhost:5001/api/auth/guru/update",
         {
-          ...formData,
-          user_id: userId
+          user_id: userId,
+          ...formData
         },
         {
           headers: {
@@ -46,131 +52,114 @@ const DaftarGuru = () => {
         }
       );
 
-      if (response.status === 200) {
-        alert("Profil guru berhasil disimpan!");
-        navigate('/login');
+      if (res.data.status === "success" || res.status === 200) {
+        alert("Profil guru berhasil dilengkapi");
+        navigate("/login");
       }
 
     } catch (err) {
-      console.log(err);
-      alert(err.response?.data?.message || "Gagal menyimpan data guru");
+      alert(err.response?.data?.message || "Gagal guru");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex flex-col items-center px-5 py-24 font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#f5e6d3] to-[#e8d2b8] flex items-center justify-center px-5 py-24 font-sans">
 
-      <div className="bg-white w-full max-w-[850px] px-[70px] py-[50px] rounded-[30px] border-2 border-[#3e2723] shadow-[0_15px_35px_rgba(0,0,0,0.04)] mt-5">
+      <div className="bg-white w-full max-w-[650px] px-8 md:px-[60px] py-[40px] rounded-[30px] shadow-xl border-2 border-[#3e2723]">
 
-        <h2 className="text-center text-[#4e342e] text-[2rem] font-extrabold mb-[40px] tracking-wide">
-          LENGKAPI PROFIL GURU
+        <h2 className="text-center text-[#3e2723] text-2xl font-extrabold mb-8">
+          PROFIL GURU
         </h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
 
           {/* NIP */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">NIP</label>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">NIP</label>
             <input
-              type="text"
               name="nip"
               onChange={handleChange}
-              required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a] focus:shadow-[0_0_0_3px_rgba(188,143,90,0.2)]"
+              placeholder="Nomor Induk Pegawai"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none focus:border-[#6d4c41]"
             />
           </div>
 
-          {/* Nama */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Nama Lengkap</label>
+          {/* NAMA */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">Nama Lengkap</label>
             <input
-              type="text"
               name="nama_lengkap"
               onChange={handleChange}
-              required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              placeholder="Nama lengkap"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none focus:border-[#6d4c41]"
             />
           </div>
 
-          {/* Gelar */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Gelar</label>
+          {/* GELAR */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">Gelar</label>
             <input
-              type="text"
               name="gelar"
-              placeholder="Contoh: S.Pd"
               onChange={handleChange}
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              placeholder="Contoh: S.Pd"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none focus:border-[#6d4c41]"
             />
           </div>
 
-          {/* Gender */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Jenis Kelamin</label>
+          {/* JENIS KELAMIN */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">Jenis Kelamin</label>
             <select
               name="jenis_kelamin"
               onChange={handleChange}
-              required
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none bg-white focus:border-[#6d4c41]"
             >
-              <option value="">-- Pilih --</option>
+              <option value="">Pilih</option>
               <option value="L">Laki-laki</option>
               <option value="P">Perempuan</option>
             </select>
           </div>
 
-          {/* No HP */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Nomor HP</label>
-
-            <div className="flex-1 w-full flex border border-[#e0d6c7] rounded-[10px] overflow-hidden bg-white">
-              
-              <div className="flex flex-col items-center justify-center px-[12px] min-w-[65px] bg-[#f5e6d3] border-r border-[#e0d6c7] text-[#4e342e]">
-                <span className="text-[12px]">ID</span>
-                <span className="text-[13px] font-semibold leading-none">+62</span>
-              </div>
-
-              <input
-                type="text"
-                name="no_hp"
-                onChange={handleChange}
-                className="flex-1 px-[15px] py-[12px] outline-none"
-              />
-            </div>
-
-            </div> 
-
-          {/* Alamat */}
-          <div className="flex items-center mb-[25px] gap-[30px] max-md:flex-col max-md:items-start">
-            <label className="basis-[220px] font-bold text-[#4e342e]">Alamat</label>
+          {/* NO HP */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">No HP</label>
             <input
-              type="text"
+              name="no_hp"
+              onChange={handleChange}
+              placeholder="08xxxxxxxx"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none focus:border-[#6d4c41]"
+            />
+          </div>
+
+          {/* ALAMAT */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-[#3e2723]">Alamat</label>
+            <input
               name="alamat"
               onChange={handleChange}
-              className="flex-1 w-full bg-white border border-[#e0d6c7] rounded-[10px] px-[15px] py-[12px] outline-none focus:border-[#bc8f5a]"
+              placeholder="Alamat lengkap"
+              className="w-full h-12 px-4 border border-[#ddd] rounded-xl outline-none focus:border-[#6d4c41]"
             />
           </div>
 
           {/* BUTTON */}
-          <div className="flex justify-between mt-[50px] gap-5 max-md:flex-col-reverse">
-            <button
-              type="button"
-              onClick={() => navigate('/Daftar')}
-              className="bg-[#efebe9] text-[#4e342e] px-[35px] py-[12px] rounded-[10px] font-bold hover:bg-[#e0d6c7] transition"
-            >
-              Kembali
-            </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 bg-[#3e2723] text-white rounded-xl font-bold hover:bg-[#2d1b17] transition disabled:bg-[#bcaaa4]"
+          >
+            {isLoading ? "Menyimpan..." : "Simpan Profil"}
+          </button>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-[#6d4c41] text-white px-[30px] py-[12px] rounded-[10px] font-bold hover:bg-[#5d4037] transition disabled:bg-[#bcaaa4]"
-            >
-              {isLoading ? "Menyimpan..." : "Simpan Profil"}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => navigate("/daftar")}
+            className="w-full h-10 bg-[#efebe9] text-[#3e2723] rounded-xl font-bold hover:bg-[#d7ccc8] transition"
+          >
+            Kembali
+          </button>
 
         </form>
       </div>

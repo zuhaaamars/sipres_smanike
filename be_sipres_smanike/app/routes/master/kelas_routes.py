@@ -1,45 +1,40 @@
-from flask import Blueprint, request, jsonify
-from app.app import db
-from app.models.master.kelas_models import Kelas
+from flask import Blueprint
+from app.controllers.master_kelas_controllers import (
+    get_all_kelas,
+    create_kelas,
+    update_kelas,
+    delete_kelas
+)
 
 kelas_bp = Blueprint('kelas_bp', __name__)
 
-# 🔹 GET semua kelas
+# =========================
+# GET ALL KELAS
+# =========================
 @kelas_bp.route('/', methods=['GET'])
 def get_kelas():
-    data = Kelas.query.all()
-    
-    return jsonify([
-        {
-            "id": k.id,
-            "kelas": k.kelas,
-            "jurusan_id": k.jurusan_id,
-            "nama_jurusan": k.jurusan.nama_jurusan if k.jurusan else None,
-            "wali_kelas": k.wali_kelas
-        } for k in data
-    ])
+    return get_all_kelas()
 
 
-# 🔹 POST tambah kelas
+# =========================
+# CREATE KELAS
+# =========================
 @kelas_bp.route('/', methods=['POST'])
 def tambah_kelas():
-    data = request.json
+    return create_kelas()
 
-    try:
-        new_kelas = Kelas(
-            kelas=data['kelas'],
-            jurusan_id=data['jurusan_id'],
-            wali_kelas=data['wali_kelas']
-        )
 
-        db.session.add(new_kelas)
-        db.session.commit()
+# =========================
+# UPDATE KELAS
+# =========================
+@kelas_bp.route('/<int:id>', methods=['PUT'])
+def edit_kelas(id):
+    return update_kelas(id)
 
-        return jsonify({
-            "message": "Kelas berhasil ditambahkan"
-        }), 201
 
-    except Exception as e:
-        return jsonify({
-            "message": str(e)
-        }), 500
+# =========================
+# DELETE KELAS
+# =========================
+@kelas_bp.route('/<int:id>', methods=['DELETE'])
+def hapus_kelas(id):
+    return delete_kelas(id)

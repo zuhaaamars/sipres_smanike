@@ -6,7 +6,7 @@ import {
   ChevronRight, AlertCircle
 } from 'lucide-react';
 
-const TARGET_COORDS = { lat: -7.556146, lng: 111.659973 };
+const TARGET_COORDS = { lat: -7.507569, lng: 111.182868 };
 const MAX_RADIUS = 100;
 
 const ScanPresensiHarian = () => {
@@ -58,18 +58,25 @@ const ScanPresensiHarian = () => {
   }, []);
 
   const fetchHistory = async () => {
-    const userRaw = localStorage.getItem('user'); 
-    if (userRaw) {
-      try {
-        const userData = JSON.parse(userRaw);
-        const siswaId = userData.profile_id;
-        const response = await axios.get(`http://localhost:5000/api/presensi/riwayat/${siswaId}`);
-        if (response.data.status === 'success') {
-          setHistory(response.data.data);
-        }
-      } catch (err) {
-        console.error("Gagal mengambil riwayat:", err);
-      }
+    const userRaw = localStorage.getItem('user');
+
+    if (!userRaw) return;
+
+    const userData = JSON.parse(userRaw);
+
+    const siswaId = userData.siswa_id; // 🔥 FIX INI
+
+    if (!siswaId) {
+      console.error("siswa_id tidak ditemukan");
+      return;
+    }
+
+    const response = await axios.get(
+      `http://localhost:5001/api/presensi/riwayat/${siswaId}`
+    );
+
+    if (response.data.status === "success") {
+      setHistory(response.data.data);
     }
   };
 
@@ -109,20 +116,25 @@ const ScanPresensiHarian = () => {
 
     try {
       const userData = JSON.parse(userRaw);
-      const idSiswa = userData.profile_id;
+      const siswaId = userData.id || userData.siswa_id || userData.profile_id;
 
       const payload = {
-        siswa_id: userData.profile_id, // ✅ FIX
         foto_bukti: capturedImage,
         latitude: location.lat,
         longitude: location.lng,
         status: 'Hadir'
       };
 
+      console.log("USER RAW:", userRaw);
       console.log("USER DATA:", userData);
-      console.log("SISWA ID YANG KIRIM:", idSiswa);
+      console.log("PROFILE ID:", userData.profile_id);
 
-      const response = await axios.post('http://localhost:5000/api/presensi/harian', payload);
+      const response = await axios.post('http://localhost:5001/api/presensi/harian',payload,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
 
       if (response.data.status === 'success') {
         setPresensiStatus('success');

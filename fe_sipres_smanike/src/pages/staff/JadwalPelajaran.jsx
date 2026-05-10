@@ -26,7 +26,7 @@ const JadwalPelajaran = () => {
   // =========================
   const fetchJadwal = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/jadwal");
+      const res = await axios.get("http://localhost:5001/api/jadwal");
       setJadwal(res.data.data || []);
     } catch (err) {
       console.log(err);
@@ -45,7 +45,7 @@ const JadwalPelajaran = () => {
   // =========================
   const handleSubmit = async () => {
     try {
-      await axios.post("http://localhost:5000/api/jadwal", form);
+      await axios.post("http://localhost:5001/api/jadwal", form);
 
       setForm({
         kelas_id: "",
